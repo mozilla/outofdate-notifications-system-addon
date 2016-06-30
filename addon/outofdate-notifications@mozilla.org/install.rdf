@@ -3,7 +3,6 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-#filter substitution
 
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
@@ -18,9 +17,9 @@
         with minimum and maximum supported versions. -->
     <em:targetApplication>
       <Description>
-        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:id>{4a4e6404-503c-4a29-946b-bd3e067c3f92}</em:id>
         <em:minVersion>44.0</em:minVersion>
-        <em:maxVersion>@FIREFOX_VERSION@</em:maxVersion>
+        <em:maxVersion>99.0</em:maxVersion>
       </Description>
     </em:targetApplication>
 
