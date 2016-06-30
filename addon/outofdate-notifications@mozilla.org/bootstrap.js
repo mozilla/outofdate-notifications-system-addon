@@ -6,6 +6,7 @@
 const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 
 Cu.import("resource://gre/modules/Preferences.jsm");
+Cu.import('resource://gre/modules/TelemetryController.jsm');
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "Services",
                                   "resource://gre/modules/Services.jsm");
@@ -19,6 +20,12 @@ const PREF_UPDATE_URL         = "app.update.url.manual";
 const PREF_UPDATE_DEFAULT_URL = "https://www.mozilla.org/firefox";
 
 let gNotification = null;
+let gPingPayload = { shown: false, clicked: false };
+
+function sendPing() {
+  TelemetryController.submitExternalPing(
+    "outofdate-notifications-system-addon", gPingPayload);
+}
 
 function startup() {
   let wm = Cc["@mozilla.org/appshell/window-mediator;1"]
@@ -30,6 +37,8 @@ function startup() {
 
   // Load into any new windows
   wm.addListener(windowListener);
+
+  sendPing();
 }
 
 function showDoorhanger(aWindow) {
@@ -42,6 +51,9 @@ function showDoorhanger(aWindow) {
       label:       gStringBundle.GetStringFromName("buttonlabel"),
       accessKey:   gStringBundle.GetStringFromName("buttonaccesskey"),
       callback: function () {
+        gPingPayload.clicked = true;
+        sendPing();
+
         let url = Preferences.get(PREF_UPDATE_URL, PREF_UPDATE_DEFAULT_URL);
         aWindow.openUILinkIn(url, "tab");
       }
@@ -58,6 +70,9 @@ function showDoorhanger(aWindow) {
   let closeButton = aWindow.document.getAnonymousElementByAttribute(
     gNotification, "class", "messageCloseButton close-icon tabbable");
   closeButton.hidden = true;
+
+  gPingPayload.shown = true;
+  sendPing();
 }
 
 function loadIntoWindow(aWindow) {
