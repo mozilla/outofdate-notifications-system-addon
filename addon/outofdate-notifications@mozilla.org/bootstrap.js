@@ -24,7 +24,8 @@ let gPingPayload = { shown: false, clicked: false };
 
 function sendPing() {
   TelemetryController.submitExternalPing(
-    "outofdate-notifications-system-addon", gPingPayload);
+    "outofdate-notifications-system-addon", gPingPayload,
+    { addClientId: true });
 }
 
 function startup() {
