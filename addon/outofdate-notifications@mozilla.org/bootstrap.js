@@ -18,8 +18,6 @@ XPCOMUtils.defineLazyGetter(this, "gStringBundle", function() {
 const PREF_UPDATE_URL         = "app.update.url.manual";
 const PREF_UPDATE_DEFAULT_URL = "https://www.mozilla.org/firefox";
 
-let gNotification = null;
-
 function startup() {
   let wm = Cc["@mozilla.org/appshell/window-mediator;1"]
              .getService(Ci.nsIWindowMediator);
@@ -52,11 +50,11 @@ function showDoorhanger(aWindow) {
   if (!box) {
     return;
   }
-  gNotification = box.appendNotification(message, "outofdate-notifications",
+  let notification = box.appendNotification(message, "outofdate-notifications",
                                          "", box.PRIORITY_WARNING_MEDIUM,
                                          buttons);
   let closeButton = aWindow.document.getAnonymousElementByAttribute(
-    gNotification, "class", "messageCloseButton close-icon tabbable");
+    notification, "class", "messageCloseButton close-icon tabbable");
   closeButton.hidden = true;
 }
 
@@ -68,7 +66,7 @@ function loadIntoWindow(aWindow) {
 }
 
 function unloadFromWindow(aWindow) {
-  if (!aWindow || !gNotification) {
+  if (!aWindow) {
     return;
   }
   let box =
@@ -76,7 +74,11 @@ function unloadFromWindow(aWindow) {
   if (!box) {
     return;
   }
-  box.removeNotification(gNotification);
+  let notification = box.getNotificationWithValue("outofdate-notifications");
+  if (!notification) {
+    return;
+  }
+  box.removeNotification(notification);
 }
 
 var windowListener = {
