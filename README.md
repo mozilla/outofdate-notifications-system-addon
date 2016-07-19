@@ -21,3 +21,6 @@ but the optional client ID is included, so that these pings can be correlated
 with other telemetry.
 
 These pings will not be sent if telemetry is disabled.
+
+## Build, Test & Release
+Refer to https://wiki.mozilla.org/Firefox/Go_Faster/Releasing_an_add-on_mechanics for the latest instructions.
