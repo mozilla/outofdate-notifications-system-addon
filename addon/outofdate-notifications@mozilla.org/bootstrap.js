@@ -18,8 +18,19 @@ XPCOMUtils.defineLazyGetter(this, "gStringBundle", function() {
 
 const PREF_UPDATE_URL         = "app.update.url.manual";
 const PREF_UPDATE_DEFAULT_URL = "https://www.mozilla.org/firefox";
+const KNOWN_DISTROS = ["1und1",
+                       "acer",
+                       "aol",
+                       "bing",
+                       "gmx",
+                       "mail.com",
+                       "toshiba",
+                       "webde",
+                       "yandex",
+                       "yahoo"];
 
 let gPingPayload = { shown: false, clicked: false };
+let gIsPartnerRepack = false;
 
 function sendPing() {
   TelemetryController.submitExternalPing(
@@ -28,6 +39,17 @@ function sendPing() {
 }
 
 function startup() {
+  // Don't run this addon for partner repacks.
+  let defaultPrefs = new Preferences({ defaultBranch: true });
+  let distroId = defaultPrefs.get("distribution.id", "not-repack");
+
+  for (let d of KNOWN_DISTROS) {
+    if (d === distroId.substring(0, d.length)) {
+      gIsPartnerRepack = true;
+      return;
+    }
+  }
+
   let wm = Cc["@mozilla.org/appshell/window-mediator;1"]
              .getService(Ci.nsIWindowMediator);
 
@@ -116,7 +138,7 @@ var windowListener = {
 function shutdown(aData, aReason) {
   // When the application is shutting down we normally don't have to clean
   // up any UI changes made
-  if (aReason == APP_SHUTDOWN) {
+  if (aReason == APP_SHUTDOWN || gIsPartnerRepack) {
     return;
   }
 
