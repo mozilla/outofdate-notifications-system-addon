@@ -29,13 +29,18 @@ const KNOWN_DISTROS = ["1und1",
                        "yandex",
                        "yahoo"];
 
-let gPingPayload = { shown: false, clicked: false };
+let gPingTypes = [{ payload: { event: "started" }, sent: false },
+                  { payload: { event: "shown"   }, sent: false },
+                  { payload: { event: "clicked" }, sent: false }];
 let gIsPartnerRepack = false;
 
-function sendPing() {
-  TelemetryController.submitExternalPing(
-    "outofdate-notifications-system-addon", gPingPayload,
-    { addClientId: true });
+function sendPing(aPingIndex) {
+  if (!gPingTypes[aPingIndex].sent) {
+    TelemetryController.submitExternalPing(
+      "outofdate-notifications-system-addon", gPingTypes[aPingIndex].payload,
+      { addClientId: true });
+    gPingTypes[aPingIndex].sent = true;
+  }
 }
 
 function startup() {
@@ -60,7 +65,7 @@ function startup() {
   // Load into any new windows
   wm.addListener(windowListener);
 
-  sendPing();
+  sendPing(0);
 }
 
 function showDoorhanger(aWindow) {
@@ -73,8 +78,7 @@ function showDoorhanger(aWindow) {
       label:       gStringBundle.GetStringFromName("buttonlabel"),
       accessKey:   gStringBundle.GetStringFromName("buttonaccesskey"),
       callback: function () {
-        gPingPayload.clicked = true;
-        sendPing();
+        sendPing(2);
 
         let url = Preferences.get(PREF_UPDATE_URL, PREF_UPDATE_DEFAULT_URL);
         aWindow.openUILinkIn(url, "tab");
@@ -93,8 +97,7 @@ function showDoorhanger(aWindow) {
     notification, "class", "messageCloseButton close-icon tabbable");
   closeButton.hidden = true;
 
-  gPingPayload.shown = true;
-  sendPing();
+  sendPing(1);
 }
 
 function loadIntoWindow(aWindow) {
