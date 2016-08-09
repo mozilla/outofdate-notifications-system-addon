@@ -16,10 +16,11 @@ data in this form:
     }
 
 The event can be one of the following:
-"started": Indicates when the addon has started up.
-"shown"  : Indicates when the doorhanger notification has been shown.
-"clicked": Indicates when the button linking to the download page has been
-           clicked.
+
+    "started": Indicates when the addon has started up.
+    "shown"  : Indicates when the doorhanger notification has been shown.
+    "clicked": Indicates when the button linking to the download page has been
+               clicked.
 
 The optional environment data from the common ping format is not included, but
 the optional client ID is included, so that these pings can be correlated with
